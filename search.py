@@ -113,12 +113,112 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # 0th
+    # Check if initial state is goal state
+    if problem.isGoalState(problem.getStartState()):
+        return []
+
+    # INIT
+    else:
+        from util import Stack
+
+        # stackXY: ((x,y),[path]) #
+        stackXY = Stack()
+
+        visited = []  # Visited states
+        path = []  # Every state keeps it's path from the starting state
+    #============
+
+    # 1st get ROOT - Start from the beginning and find a solution
+    stackXY.push((problem.getStartState(), []))
+    # example:
+    # Stack.push( (34,16), empty_path_list )
+
+    """Friendly reminder: in a while loop, NODE can be any thing, from the root to the child"""
+    while not (stackXY.isEmpty()): # fight till the end baby
+        # 2nd pop the NODE
+        xy, path = stackXY.pop()
+
+        # 2.b. marked Visited
+        visited.append(xy)
+
+        # 3rd Expand - Moving to intercept next targets
+        targetList = problem.expand(xy)
+
+        if targetList:
+            for target in targetList:
+                # target[0] is the target's coordinate
+                if target[0] not in visited:
+                    # Lectures code: Artillerie, feuer auf diese Position
+                    # if target[0] not in visited and target[0] not in (state[0] for state in stackXY.list):
+                    #   if problem.isGoalState(target[0]):
+                    #       return path + [target[1]]
+
+                    # 3.b. Calculate new path
+                    newPath = path + [target[1]]
+
+                    # 4th check Jackpot?
+                    if problem.isGoalState(target[0]):
+                        return newPath
+
+                    # Students code: attack enemy fucking position
+                    # 5th push to Stack
+                    stackXY.push((target[0], newPath))
+#end depthFirstSearch()
+#==================================================================================
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    if problem.isGoalState(problem.getStartState()):
+        return []
+
+    # INIT
+    else:
+        from util import Queue
+
+        # queueXY: ((x,y),[path]) #
+        queueXY = Queue()
+
+        visited = []  # Visited states
+        path = []  # Every state keeps it's path from the starting state
+    # ============
+
+    # 1st get ROOT - Start from the beginning and find a solution
+    queueXY.push((problem.getStartState(), []))
+    # example:
+    # Stack.push( (34,16), empty_path_list )
+
+    """Friendly reminder: in a while loop, NODE can be any thing, from the root to the child"""
+    while not (queueXY.isEmpty()):  # fight till the end baby
+        # 2nd pop the NODE
+        xy, path = queueXY.pop()
+
+        # 2.b. marked Visited
+        visited.append(xy)
+
+        # 3rd Expand - Moving to intercept next targets
+        targetList = problem.expand(xy)
+
+        if targetList:
+            for target in targetList:
+                # target[0] is the target's coordinate
+                if target[0] not in visited:
+                    # Lectures code: Artillerie, feuer auf diese Position
+                    # if target[0] not in visited and target[0] not in (state[0] for state in queueXY.list):
+                    #   if problem.isGoalState(target[0]):
+                    #       return path + [target[1]]
+
+                    # 3.b. Calculate new path
+                    newPath = path + [target[1]]
+
+                    # 4th check Jackpot?
+                    if problem.isGoalState(target[0]):
+                        return newPath
+
+                    # Students code: attack enemy fucking position
+                    # 5th push to Stack
+                    queueXY.push((target[0], newPath))
 
 def nullHeuristic(state, problem=None):
     """
