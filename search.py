@@ -164,8 +164,7 @@ def depthFirstSearch(problem):
                     # Students code: attack enemy fucking position
                     # 5th push to Stack
                     stackXY.push((target[0], newPath))
-#end depthFirstSearch()
-#==================================================================================
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
@@ -220,6 +219,7 @@ def breadthFirstSearch(problem):
                     # 5th push to Stack
                     queueXY.push((target[0], newPath))
 
+
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
@@ -227,10 +227,76 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
+# Calculate f(n) = g(n) + h(n) #
+def func(problem,state,heuristic):
+    return problem.getCostOfActionSequence(state[1]) + heuristic(state[0],problem)
+
+from util import PriorityQueue
+class PriorityQueueWithHeuristic(PriorityQueue):
+    """
+    Implements a priority queue with the same push/pop signature of the
+    Queue and the Stack classes. This is designed for drop-in replacement for
+    those two classes. The caller has to provide a priority function, which
+    extracts each item's priority.
+    """
+    def  __init__(self, problem, costFunction):
+        "priorityFunction (item) -> priority"
+        PriorityQueue.__init__(self)   # Pythonly re-use PriorityQueue class
+        self.heuristic = costFunction  # store the heuristic/cost function
+        self.problem = problem
+
+    # Override the push() function from PriorityQueue class
+    def push(self, item, heuristic):
+        "Adds an item to the queue with priority from the priority function"
+        PriorityQueue.push(self, item, self.heuristic(self.problem,item,heuristic))
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    if problem.isGoalState(problem.getStartState()):
+        return []
+
+    else:
+        # queueXY: ((x,y),[path]) #
+        queueXY = PriorityQueueWithHeuristic(problem,func)
+
+        path = [] # Every state keeps it's path from the starting state
+        visited = [] # Visited states
+
+        # Add initial state. Path is an empty list #
+        element = (problem.getStartState(),[])
+
+        queueXY.push(element,heuristic)
+        # ============
+
+        # 1st get ROOT - Start from the beginning and find a solution
+        while not (queueXY.isEmpty()):  # fight till the end baby
+            # Get informations of current state #
+            xy,path = queueXY.pop() # Take position and path
+
+            # State is already been visited. A path with lower cost has previously
+            # been found. Overpass this state
+            if xy in visited:
+                continue
+            else:
+                visited.append(xy)
+
+            # 3rd Expand - Moving to intercept next targets
+            targetList = problem.expand(xy)
+
+            # Add new states in queue and fix their path #
+            if targetList:
+                for target in targetList:
+                    if target[0] not in visited:
+                        newPath = path + [target[1]] # Fix new path
+
+                        # 4th check Jackpot?
+                        if problem.isGoalState(target[0]):
+                            return newPath
+
+                        element = (target[0],newPath)
+                        queueXY.push(element,heuristic)
 
 
 # Abbreviations
