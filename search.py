@@ -288,7 +288,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             # Add new states in queue and fix their path #
             if targetList:
                 for target in targetList:
-                    if target[0] not in visited:
+                    if target[0] not in visited and target[0] not in (state[0] for state in queueXY.heap):
                         newPath = path + [target[1]] # Fix new path
 
                         # 4th check Jackpot?
@@ -297,6 +297,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
                         element = (target[0],newPath)
                         queueXY.push(element,heuristic)
+
+# Data structure library - Nhat Huy Copyright
+
 
 
 # Abbreviations
